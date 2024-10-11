@@ -4,6 +4,19 @@
 {% endblock title %}
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'ai_app/css/home.css' %}" />
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const textarea = document.getElementById("email-content");
+    const form = document.getElementById("emailForm");
+
+    textarea.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault(); // Enter 키로 폼 제출 방지
+        form.submit(); // Enter 키로 폼 제출
+      }
+    });
+  });
+</script>
 {% endblock extrahead %}
 
 {% block content %}
