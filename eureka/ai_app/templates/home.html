@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% load static %}
+{% block title %}
+이메일 스팸 감지기
+{% endblock title %}
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'ai_app/css/home.css' %}" />
+{% endblock extrahead %}
+
+{% block content %}
+<h1>
+  H조 유레카 프로젝트
+</h1>
+<div class="container">
+        <h1>이메일 스팸 감지기</h1>
+        <p>아래에 이메일 내용을 입력하면 스팸 여부를 확인합니다.</p>
+
+        <form action="{% url 'check' %}" method="POST" id="emailForm">
+            {% csrf_token %}
+            <label for="email-content">이메일 내용:</label>
+            <textarea id="email-content" name="email-content" rows="10" required></textarea>
+
+            <button type="submit" class="submit-btn">스팸 확인</button>
+        </form>
+
+        <div id="result">
+            {% if "스팸" in result%}
+            <span style="color: #993333">{{ result }}</span>
+            {% else %}
+            <span style="color: #4CAF50">{{ result }}</span>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
