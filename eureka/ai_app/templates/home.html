@@ -36,11 +36,16 @@
         </form>
 
         <div id="result">
-            {% if "스팸" in result%}
-            <span style="color: #993333">{{ result }}</span>
+        {% if result %}
+            {% if "스팸" in result %}
+                <span style="color: #993333">{{ result }} {{ probability }}%</span>
             {% else %}
-            <span style="color: #4CAF50">{{ result }}</span>
+                <span style="color: #4CAF50">{{ result }} {{ probability }}%</span>
             {% endif %}
+        {% else %}
+            <span>결과가 없습니다.</span>
+        {% endif %}
         </div>
+
     </div>
 {% endblock content %}
