@@ -2,72 +2,56 @@ from django.shortcuts import render, redirect
 import joblib
 import os
 import logging
-import numpy as np
 from django.conf import settings
-from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.ensemble import VotingClassifier
 
-# 모델 파일 경로
+# Define model file path
 model_path = os.path.join(settings.BASE_DIR, 'ai_app/spam_detector/spam_classifier_model.joblib')
 logger = logging.getLogger(__name__)
 
-# 모델 로드
+# Load the model pipeline
 def load_model():
     if os.path.exists(model_path):
         try:
-            model = joblib.load(model_path, mmap_mode='r')
+            with open(model_path, 'rb') as f:
+                model = joblib.load(f)
             return model
         except Exception as e:
             logger.error(f"Error loading model: {e}")
             raise
     else:
         logger.error(f"Model file not found: {model_path}")
-        raise FileNotFoundError(f"모델 파일을 찾을 수 없습니다: {model_path}")
+        raise FileNotFoundError(f"Model file not found: {model_path}")
 
-# 홈 페이지
+# Home page
 def home(request):
     return render(request, 'home.html')
 
-# 스팸 체크 API
+# Spam check API
 def check(request):
     if request.method == 'POST':
-        data = request.POST.get('email-content', '')  # 입력받은 이메일 내용
+        data = request.POST.get('email-content', '')
 
         if data:
             try:
-                model = load_model()  # 모델 로드
+                model = load_model()  # Load the pipeline model (includes vectorizer)
             except Exception as e:
                 logger.error(f"Error loading model: {e}")
-                return render(request, 'home.html', {"error": "모델을 로드하는 중 오류가 발생했습니다. 관리자에게 문의하세요."})
+                return render(request, 'home.html', {"error": "Error loading model, please contact the administrator."})
 
-            # 파이프라인 속성 복원
-            if isinstance(model, Pipeline):
-                # 개별 구성 요소 복원
-                tfidf = model.named_steps['tfidf']
-                tfidf.vocabulary_ = np.asarray(tfidf.vocabulary_).astype(object)
+            # Transform input text directly using the model pipeline
+            feature_vector = model.named_steps['tfidf'].transform([data])
 
-                classifier = model.named_steps['classifier']
-                if hasattr(classifier, 'n_features_in_'):
-                    classifier.n_features_in_ = len(tfidf.vocabulary_)
+            # Predict probability directly using predict_proba
+            prediction_proba = model.named_steps['classifier'].predict_proba(feature_vector)
 
-            # 입력 데이터를 리스트로 감싸기
-            feature_vector = [data]  # 단일 입력을 리스트로 변환
+            spam_probability = prediction_proba[0][1] * 100  # Probability of spam
+            non_spam_probability = prediction_proba[0][0] * 100  # Probability of ham
 
-            # 예측 확률
-            prediction_proba = model.predict_proba(feature_vector)
-
-            # 스팸 확률
-            spam_probability = prediction_proba[0][1] * 100  # 스팸일 확률
-            non_spam_probability = prediction_proba[0][0] * 100  # 비스팸일 확률
-
-            if spam_probability > 50:  # 임계값 설정
-                response = '스팸'
+            if spam_probability > 50:  # Define threshold
+                response = '스팸 메일'
                 probability = f"{spam_probability:.2f}"
             else:
-                response = '정상'
+                response = '정상 메일'
                 probability = f"{non_spam_probability:.2f}"
 
             return render(request, 'home.html', {"result": response, "probability": probability})
