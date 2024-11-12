@@ -26,6 +26,7 @@
 <div class="container">
         <h1>이메일 스팸 감지기</h1>
         <p>아래에 이메일 내용을 입력하면 스팸 여부를 확인합니다.</p>
+        <p style="color:red;">Only English</p>
 
         <form action="{% url 'check' %}" method="POST" id="emailForm">
             {% csrf_token %}
