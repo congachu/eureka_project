@@ -17,7 +17,6 @@
         </div>
         <div class="navbar-nav">
           {% if user.is_authenticated %}
-            <span class="navbar-text">{{ user.username }}님 안녕하세요!</span>
             <a href="{% url 'profile' %}" class="navbar-link">프로필</a>
             <a href="{% url 'logout' %}" class="navbar-link">로그아웃</a>
           {% else %}
