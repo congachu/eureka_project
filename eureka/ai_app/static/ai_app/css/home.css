@@ -60,3 +60,18 @@ textarea {
     font-size: 18px;
     color: #333;
 }
+
+.recommend-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.recommend-btn:hover {
+    background-color: #45a049;
+}

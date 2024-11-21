@@ -17,6 +17,20 @@
       }
     });
   });
+  document.addEventListener("DOMContentLoaded", function () {
+    const recommendBtn = document.getElementById("recommend-btn");
+    const emailContent = document.getElementById("email-content");
+
+    recommendBtn.addEventListener("click", function () {
+      // 추천 내용 가져오기
+      fetch("{% url 'recommend' %}")
+        .then(response => response.json())
+        .then(data => {
+          emailContent.value = data.recommendation; // 추천 내용을 텍스트박스에 추가
+        })
+        .catch(error => console.error("Error fetching recommendation:", error));
+    });
+  });
 </script>
 {% endblock extrahead %}
 
@@ -30,6 +44,8 @@
             {% csrf_token %}
             <label for="email-content">이메일 내용:</label>
             <textarea id="email-content" name="email-content" rows="10" required></textarea>
+
+            <button type="button" id="recommend-btn" class="recommend-btn">추천 내용 가져오기</button>
 
             <button type="submit" class="submit-btn">스팸 확인</button>
         </form>
