@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'ai_app/css/profile.css' %}">
+{% endblock extrahead %}
+
+{% block content %}
+<div class="profile-container">
+    <h1>프로필 페이지</h1>
+    <p><strong>안녕하세요, {{ user.username }}님!</strong></p>
+    <hr>
+
+    <h2>내 점검 기록</h2>
+    <table class="record-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>내용</th>
+                <th>결과</th>
+                <th>확률</th>
+                <th>점검 시간</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for check in user_checks %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ check.email_content|truncatewords:10 }}</td>
+                <td>{{ check.result }}</td>
+                <td>{{ check.probability }}%</td>
+                <td>{{ check.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">점검 기록이 없습니다.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}회원가입{% endblock title %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'ai_app/css/auth.css' %}">
+{% endblock extrahead %}
+
+{% block content %}
+<div class="auth-container">
+    <h2>회원가입</h2>
+
+    <form method="post" action="{% url 'register' %}" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">아이디</label>
+            <input type="text" name="username" id="username" required class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" name="password" id="password" required class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">비밀번호 확인</label>
+            <input type="password" name="confirm_password" id="confirm_password" required class="form-control">
+        </div>
+        <button type="submit" class="submit-btn">회원가입</button>
+    </form>
+    
+    <p>이미 계정이 있으신가요? <a href="{% url 'login' %}" class="auth-link">로그인</a></p>
+</div>
+{% endblock content %}

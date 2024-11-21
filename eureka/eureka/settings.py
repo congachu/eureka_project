@@ -27,6 +27,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['15.164.213.45', '127.0.0.1']
 
+SESSION_COOKIE_AGE = 604800  # 1 week in seconds
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+AUTH_USER_MODEL = 'ai_app.User'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+
 
 # Application definition
 

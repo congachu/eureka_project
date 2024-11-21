@@ -1,0 +1,29 @@
+.profile-container {
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.record-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.record-table th, .record-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.record-table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.record-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
