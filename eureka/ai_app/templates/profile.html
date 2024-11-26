@@ -25,7 +25,7 @@
         <tbody>
             {% for check in user_checks %}
             <tr>
-                <td>{{ forloop.counter }}</td>
+                <td>{{ user_checks.start_index|add:forloop.counter0 }}</td>
                 <td>{{ check.email_content|truncatewords:10 }}</td>
                 <td>{{ check.result }}</td>
                 <td>{{ check.probability }}%</td>
@@ -38,5 +38,22 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination">
+        {% if user_checks.has_previous %}
+            <a href="?page=1">&laquo; 첫 페이지</a>
+            <a href="?page={{ user_checks.previous_page_number }}">이전</a>
+        {% endif %}
+
+        <span>
+            페이지 {{ user_checks.number }} / {{ user_checks.paginator.num_pages }}
+        </span>
+
+        {% if user_checks.has_next %}
+            <a href="?page={{ user_checks.next_page_number }}">다음</a>
+            <a href="?page={{ user_checks.paginator.num_pages }}">마지막 페이지 &raquo;</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock content %}

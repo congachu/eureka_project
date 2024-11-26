@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import EmailCheck
 
 # Define model file path
@@ -122,16 +123,16 @@ def register(request):
         # Basic validation
         if not username or not password:
             messages.error(request, '아이디와 비밀번호를 모두 입력해주세요.')
-            return render(request, 'register.html')
+            return render(request, 'registration.html')
 
         if password != confirm_password:
             messages.error(request, '비밀번호가 일치하지 않습니다.')
-            return render(request, 'register.html')
+            return render(request, 'registration.html')
 
         User = get_user_model()
         if User.objects.filter(username=username).exists():
             messages.error(request, '이미 존재하는 아이디입니다.')
-            return render(request, 'register.html')
+            return render(request, 'registration.html')
 
         # Create new user
         try:
@@ -163,10 +164,28 @@ def profile(request):
     user = request.user
 
     # 해당 사용자의 점검 기록 가져오기
-    user_checks = EmailCheck.objects.filter(user=user).order_by('-created_at')
+    user_checks_list = EmailCheck.objects.filter(user=user).order_by('-created_at')
+
+    # 페이지네이션 설정 (한 페이지에 10개의 레코드)
+    paginator = Paginator(user_checks_list, 10)
+
+    # 현재 페이지 번호 가져오기
+    page = request.GET.get('page', 1)
+
+    try:
+        user_checks = paginator.page(page)
+    except PageNotAnInteger:
+        # 페이지 번호가 정수가 아닌 경우 첫 페이지 보여주기
+        user_checks = paginator.page(1)
+    except EmptyPage:
+        # 페이지 범위를 벗어난 경우 마지막 페이지 보여주기
+        user_checks = paginator.page(paginator.num_pages)
 
     # 사용자 정보 및 점검 기록을 템플릿에 전달
-    return render(request, 'profile.html', {'user': user, 'user_checks': user_checks})
+    return render(request, 'profile.html', {
+        'user': user,
+        'user_checks': user_checks
+    })
 
 
 def recommend_email(request):
